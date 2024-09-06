@@ -42,6 +42,7 @@ models/
 .credentials
 secrets.toml
 *.json
+nltk_data
 
 # User defined extras
 # Complete to your desire

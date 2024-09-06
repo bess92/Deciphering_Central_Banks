@@ -6,8 +6,8 @@ def load_models(sent_model, agent_model):
 
     dirname = os.path.dirname(__file__)
 
-    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../notebooks/{sent_model}'))
-    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../notebooks/{agent_model}'))
+    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/SVM/{sent_model}'))
+    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/SVM/{agent_model}'))
 
     with open(sent_model_path, 'rb') as f:
         sent_model_pkl = pickle.load(f)
@@ -20,8 +20,8 @@ def load_tokenizers(sent_tok, agent_tok):
 
     dirname = os.path.dirname(__file__)
 
-    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../notebooks/{sent_tok}'))
-    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../notebooks/{agent_tok}'))
+    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/Tokenizers/{sent_tok}'))
+    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/Tokenizers/{agent_tok}'))
 
     with open(sent_model_path, 'rb') as f:
         sent_tok_pkl = pickle.load(f)

@@ -20,3 +20,4 @@ docker_deploy:
 
 run_api:
 	uvicorn deciphering_cb.api.fast:app --reload
+
