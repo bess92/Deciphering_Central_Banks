@@ -3,7 +3,7 @@ import pandas as pd
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from deciphering_cb.ml_dl_logic.tokenizer import  word2vec_tokenizer, tokenizer_tokenizer, bert_tokenizer
+from deciphering_cb.ml_dl_logic.tokenizer import  tokenizer_tokenizer, bert_tokenizer
 import os
 ########################################################################################################################
 

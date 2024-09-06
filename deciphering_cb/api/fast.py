@@ -3,6 +3,7 @@ from deciphering_cb.ml_dl_logic.data import preprocess
 from deciphering_cb.ml_dl_logic.registry import load_models
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
+import nltk
 # Create FastAPI app
 app = FastAPI()
 
@@ -17,6 +18,8 @@ app.add_middleware(
 # Load the model at startup and store it in app.states
 app.state.model_sent, app.state.model_agent = load_models('svm_sentiment.pkl', 'svm_agent.pkl')
 
+#nltk.download('wordnet')
+
 # predict
 @app.get("/predict")
 def predict(text):
@@ -28,7 +31,7 @@ def predict(text):
         'Sentiment Classification' : int(np.argmax(y_pred_sent)),
         'Agent Classification' : int(np.argmax(y_pred_ag))
     }
-    
+
 #import transformers
 #from transformers import AutoTokenizer,TFAutoModelForSequenceClassification
 #bess = TFAutoModelForSequenceClassification.from_pretrained('sentiment_bert')
