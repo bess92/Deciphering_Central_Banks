@@ -10,10 +10,11 @@ RUN pip install -r requirements.txt
 # RUN python -m nltk.downloader wordnet -d /usr/local/nltk_data
 # RUN python -m nltk.downloader stopwords -d /usr/local/nltk_data
 
-COPY nltk_data /root/nltk_data
+#COPY nltk_data /root/nltk_data
 #RUN pip install .
 
 COPY deciphering_cb deciphering_cb
-COPY model model
+COPY sentiment_model sentiment_model
+COPY agent_model agent_model
 
 CMD uvicorn deciphering_cb.api.fast:app --host 0.0.0.0 --port $PORT

@@ -1,31 +1,15 @@
-import pickle
 import os
+from transformers import TFAutoModelForSequenceClassification
 
 
-def load_models(sent_model, agent_model):
-
-    dirname = os.path.dirname(__file__)
-
-    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/SVM/{sent_model}'))
-    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/SVM/{agent_model}'))
-
-    with open(sent_model_path, 'rb') as f:
-        sent_model_pkl = pickle.load(f)
-    with open(agent_model_path, 'rb') as f:
-        agent_model_pkl = pickle.load(f)
-
-    return sent_model_pkl, agent_model_pkl
-
-def load_tokenizers(sent_tok, agent_tok):
+def load_models():
 
     dirname = os.path.dirname(__file__)
 
-    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/Tokenizers/{sent_tok}'))
-    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../model/Tokenizers/{agent_tok}'))
+    sent_model_path = os.path.abspath(os.path.join(dirname, f'../../sentiment_model'))
+    agent_model_path = os.path.abspath(os.path.join(dirname, f'../../agent_model'))
 
-    with open(sent_model_path, 'rb') as f:
-        sent_tok_pkl = pickle.load(f)
-    with open(agent_model_path, 'rb') as f:
-        agent_tok_pkl = pickle.load(f)
+    sent_model_tf = TFAutoModelForSequenceClassification.from_pretrained(sent_model_path)
+    agent_model_tf = TFAutoModelForSequenceClassification.from_pretrained(agent_model_path)
 
-    return sent_tok_pkl, agent_tok_pkl
+    return sent_model_tf, agent_model_tf

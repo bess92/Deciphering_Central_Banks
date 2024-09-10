@@ -1,8 +1,11 @@
-nltk==3.6.5
 pandas==2.2.2
 numpy
 fastapi
 tensorflow==2.17.0
-gensim
 uvicorn
 scikit-learn==1.5.1
+transformers
+bs4
+requests
+regex
+tf-keras
