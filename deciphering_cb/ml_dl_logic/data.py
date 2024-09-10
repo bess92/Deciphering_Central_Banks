@@ -84,13 +84,13 @@ def scrape_website_text(url):
         target_div = soup.select_one('#main-wrapper > main > div.section')
         for h2 in target_div.find_all('h2'):
             h2.decompose()
+        for tag in target_div.find_all(['p', 'a'], class_=['ecb-publicationDate', 'arrow']):
+            tag.decompose()
         text = target_div.get_text(separator=' ', strip=True)
         return text
     except Exception as e:
         return f"An error occurred: {e}"
-# How to use it
-url = "https://www.ecb.europa.eu/press/press_conference/monetary-policy-statement/2024/html/ecb.is240718~6600b4add6.en.html"
-scraped_text = scrape_website_text(url)
+
 
 ########################################################################################################################
 

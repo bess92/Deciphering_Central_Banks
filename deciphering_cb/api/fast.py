@@ -6,6 +6,8 @@ import numpy as np
 import tensorflow as tf
 import pandas as pd
 from transformers import AutoTokenizer
+from deciphering_cb.ml_dl_logic.model import ag_predict, sent_predict
+import threading
 
 # Create FastAPI app
 app = FastAPI()
@@ -32,18 +34,15 @@ def predict(text):
 
     speech = new_text(text)
 
-    speech_preproc_ag = app.state.bert_tokenizer(speech['Sentence'].to_list(), max_length=150, padding = "max_length", truncation = True, return_tensors="tf")
-    speech_preproc_sent = app.state.roberta_tokenizer(speech['Sentence'].to_list(), max_length=150, padding = "max_length", truncation = True, return_tensors="tf")
+    t1 = threading.Thread(target=ag_predict, args=(app.state.bert_tokenizer, app.state.model_agent, speech, app))
+    t2 = threading.Thread(target=sent_predict, args=(app.state.roberta_tokenizer, app.state.model_sent, speech, app))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
 
-    #sentiment predicition
-    y1_preds=tf.nn.sigmoid(app.state.model_sent.predict(speech_preproc_sent)['logits'])
-    sentiments=[np.argmax(i) if max(i)>0.65 else 2 for i in y1_preds]
-    sent_p=[round(float(max(i)),2) for i in y1_preds]
-
-    # agent prediction
-    y2_preds = tf.nn.softmax(app.state.model_agent.predict(speech_preproc_ag)['logits'])
-    agents=[np.argmax(i) if max(i)>0.85 else 5 for i in y2_preds]
-    agents_p=[round(float(max(i)),2) for i in y2_preds]
+    agents, agents_p = app.state.agents, app.state.agents_p
+    sentiments, sent_p = app.state.sentiments, app.state.sent_p
 
     speech['agents']=agents
     speech['agents_prob']=agents_p
@@ -66,18 +65,15 @@ def predict_by_url(url):
 
     speech = new_text(text)
 
-    speech_preproc_ag = app.state.bert_tokenizer(speech['Sentence'].to_list(), max_length=150, padding = "max_length", truncation = True, return_tensors="tf")
-    speech_preproc_sent = app.state.roberta_tokenizer(speech['Sentence'].to_list(), max_length=150, padding = "max_length", truncation = True, return_tensors="tf")
+    t1 = threading.Thread(target=ag_predict, args=(app.state.bert_tokenizer, app.state.model_agent, speech, app))
+    t2 = threading.Thread(target=sent_predict, args=(app.state.roberta_tokenizer, app.state.model_sent, speech, app))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
 
-    #sentiment predicition
-    y1_preds=tf.nn.sigmoid(app.state.model_sent.predict(speech_preproc_sent)['logits'])
-    sentiments=[np.argmax(i) if max(i)>0.65 else 2 for i in y1_preds]
-    sent_p=[round(float(max(i)),2) for i in y1_preds]
-
-    #agent prediction
-    y2_preds = tf.nn.softmax(app.state.model_agent.predict(speech_preproc_ag)['logits'])
-    agents=[np.argmax(i) if max(i)>0.85 else 5 for i in y2_preds]
-    agents_p=[round(float(max(i)),2) for i in y2_preds]
+    agents, agents_p = app.state.agents, app.state.agents_p
+    sentiments, sent_p = app.state.sentiments, app.state.sent_p
 
     speech['agents']=agents
     speech['agents_prob']=agents_p
@@ -89,10 +85,5 @@ def predict_by_url(url):
     output.replace({"sentiment": sent_classes},inplace=True)
 
     output_dict = output.to_dict(orient='records')
-    return output_dict
 
-# Make a model.py
-# ag_pred and sent_pred taking tokenizer, model as arguments
-# call these functions within prediction()
-#agpreds = ag_pred(app.state.tokeniser, app.state.model)
-# this is a test
+    return output_dict
