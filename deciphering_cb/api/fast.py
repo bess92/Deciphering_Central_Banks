@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from deciphering_cb.ml_dl_logic.data import new_text, scrape_website_text
 from deciphering_cb.ml_dl_logic.registry import load_models
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,8 +26,20 @@ app.state.bert_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 app.state.roberta_tokenizer = AutoTokenizer.from_pretrained("roberta-base")
 
 # predict
-@app.get("/predict")
-def predict(text):
+@app.post("/predict")
+async def predict(text: str = Body(..., media_type='text/plain')):
+    """
+    Classify agents and predict sentiment for the given text.
+
+    Uses pre-trained BERT (for agent classification) and RoBERTa (for sentiment analysis)
+    models to process the input text. Predictions run in parallel threads.
+
+    Parameters:
+    text: str - The input text.
+
+    Returns:
+    List of dictionaries with agent and sentiment labels along with their probabilities.
+    """
 
     ag_classes = {0: "Households", 1: "Firms", 2: 'Financial Sector', 3: 'Government', 4: 'Central bank'}
     sent_classes = {0: "Negative", 1: "Positive"}
@@ -59,6 +71,19 @@ def predict(text):
 
 @app.get("/predict_by_url")
 def predict_by_url(url):
+    """
+    Scrape text from a URL, then classify agents and predict sentiment.
+
+    Extracts text from the provided URL, then uses BERT and RoBERTa models for
+    agent classification and sentiment prediction, running in parallel threads.
+
+    Parameters:
+    url: str - The web page URL.
+
+    Returns:
+    List of dictionaries with agent and sentiment labels along with their probabilities.
+    """
+
     text = scrape_website_text(url)
     ag_classes = {0: "Households", 1: "Firms", 2: 'Financial Sector', 3: 'Government', 4: 'Central bank'}
     sent_classes = {0: "Negative", 1: "Positive"}
